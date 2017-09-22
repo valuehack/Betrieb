@@ -1,0 +1,171 @@
+%!TEX TS-program = xelatex
+%!TEX encoding = UTF-8 Unicode
+
+\documentclass[14pt, a4paper]{article}
+
+% LAYOUT
+%--------------------------------
+\usepackage{geometry} 
+\geometry{a4paper, left=35mm, right=60mm, top=30mm, bottom=30mm}
+
+% No page numbers
+\pagenumbering{gobble}
+
+% Left align
+\usepackage[document]{ragged2e}
+
+
+  % To include the letterhead
+  \usepackage{wallpaper}
+  \ULCornerWallPaper{1}{letterhead.pdf}
+
+
+% TYPOGRAPHY
+%--------------------------------
+\usepackage{fontspec} 
+\usepackage{xunicode}
+\usepackage{xltxtra}
+
+% converts LaTeX specials (quotes, dashes etc.) to Unicode
+\defaultfontfeatures{Mapping=tex-text}
+\setromanfont [Ligatures={Common}, Numbers={OldStyle}]{Adobe Garamond Pro}
+\setsansfont[Scale=0.9]{Adobe Garamond Pro}
+
+% Set paragraph break
+\setlength{\parskip}{1em}
+
+% Custom ampersand
+\newcommand{\amper}{{\fontspec[Scale=.95]{$seriffont$}\selectfont\itshape\&}}
+
+$if(seriffont)$
+\setmainfont[SmallCapsFeatures={LetterSpace=5,Letters=SmallCaps}]{$seriffont$}
+$endif$
+$if(sansfont)$
+    \setsansfont{$sansfont$}
+$endif$
+
+% Command required by how Pandoc handles the list conversion
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+% Rundung
+%--------------------
+ \usepackage{numprint}
+ 
+% TABLE CUSTOMIZATION
+%--------------------------------
+\usepackage{spreadtab}
+\usepackage[compact]{titlesec} % For customizing title sections
+\titlespacing*{\section}{0pt}{3pt}{-7pt} % Remove margin bottom from the title
+\usepackage{arydshln} % For the dotted line on the table
+\renewcommand{\arraystretch}{1.5} % Apply vertical padding to table cells
+\usepackage{hhline} % For single-cell borders
+\usepackage{enumitem} % For customizing lists
+\setlist{nolistsep} % No whitespace around list items
+\setlist[itemize]{leftmargin=0.5cm} % Reduce list left indent
+\setlength{\tabcolsep}{9pt} % Larger gutter between columns
+
+
+% LANGUAGE
+%--------------------------------
+$if(lang)$
+\usepackage{polyglossia}
+\setmainlanguage{$lang$}
+$endif$
+
+% PDF SETUP
+%--------------------------------
+\usepackage[xetex, bookmarks, colorlinks, breaklinks]{hyperref}
+\hypersetup
+{
+  pdfauthor=$author$,
+  pdfsubject=Rechnung Nr. $invoice-nr$,
+  pdftitle=Rechnung Nr. $invoice-nr$,
+  linkcolor=blue,
+  citecolor=blue,
+  filecolor=black,
+  urlcolor=blue
+}
+
+% To display custom date
+% \usepackage[nodayofweek]{datetime}
+% \newdate{date}{01}{12}{1867}
+% \date{\displaydate{date}}
+% Use this instead of \today: % \displaydate{date}
+
+% DOCUMENT
+%--------------------------------
+\begin{document}
+\today
+\vspace{2em}
+
+\normalsize \sffamily
+$for(to)$
+$to$\\
+$endfor$
+
+\vspace{3em}
+
+
+
+\vspace{1em}
+
+
+\section*{Rechnung \#$invoice-nr$}
+
+\vspace{10mm}
+
+\sffamily\small $ansprache$
+
+\medskip
+
+\sffamily
+\small
+$startnote$
+\medskip
+
+\footnotesize
+%\STautoround*{2} % Get spreadtab to always display the decimal part
+\nprounddigits{2}
+$if(commasep)$\STsetdecimalsep{,}$endif$ % Use comma as decimal separator
+
+\begin{spreadtab}{{tabular}{cp{4cm}N{8}{2}N{8}{2}}}
+  \hdashline[1pt/1pt]
+  @ \noalign{\vskip 2mm} \textbf{Menge} & @ \textbf{Beschreibung} & @ \textbf{Einzelpreis in $currency$} & @ \textbf{Gesamtpreis in $currency$} \\ \hline
+      $for(service)$  $service.count$ 
+        & @ $service.description$ 
+        $if(service.details)$\newline \begin{itemize} 
+          $for(service.details)$\scriptsize \item $service.details$ 
+          $endfor$ \end{itemize}
+          $endif$ &  $service.price$ & :={[-3,0]*[-1,0]} \\$endfor$ \noalign{\vskip 2mm} \hline
+          $if(VAT)$
+    @ & @ & @ \multicolumn{1}{r}{Nettobetrag:}                & :={sum(d1:[0,-1])} \\ \hhline{~~~-}
+    @ & @ & @ \multicolumn{1}{r}{USt $VAT$\%:}               & $VAT$/100*[0,-1] \\ \hhline{~~~-}
+ $endif$
+    @ & @ & @ \multicolumn{1}{r}{Gesamtbetrag:}                & :={sum(d1:[0,-1])} \\ \hhline{~~~-}
+\end{spreadtab}
+
+
+\vspace{7mm}
+
+\sffamily
+\small
+$middelnote$
+
+\medskip
+
+$firm$\\
+IBAN: $IBAN$\\
+BIC: $BIC$
+
+\medskip
+
+$closingnote$
+
+\medskip
+
+$author$\\
+$firm$
+
+\end{document}

@@ -1,0 +1,46 @@
+---
+invoice-nr: 001-20170511-A
+firm: scholarium
+author: Georg A. Schabetsberger
+
+to:
+- Max Mustermann
+- Holsteinische Str. 777
+- 10717 Berlin
+- Deutschland
+
+ansprache:
+startnote:
+
+service:
+- description: Tolles Buch
+  count: 2
+  price: 23.00
+  details:
+    - neu
+- description: Anderes Buch
+  count: 1
+  price: 20.00
+  details:
+     - gebraucht
+- description: sehr sehr tolles Buch
+  count: 1
+  price: 999.00
+  details:
+    - Roland Baader Bibliothek
+
+middelnote: |
+  Bitte überweisen Sie den Gesamtbetrag innerhalb von 14 Tagen, mit Angabe der Rechnungsnummer, auf folgendes Konto:
+
+Inhaber: scholarium
+IBAN: AT81 2011 1827 1589 8503
+BIC: GIBAATWWXXX
+
+closingnote: |
+    Mit freundlichen Grüßen,
+
+# Invoice settings
+currency: EUR
+commasep: true
+lang: german
+...
